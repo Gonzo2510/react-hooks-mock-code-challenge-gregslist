@@ -1,11 +1,35 @@
-import React from "react";
-// import ListingCard from "./ListingCard";
+import React, { useEffect, useState } from "react";
+import ListingCard from "./ListingCard";
 
-function ListingsContainer() {
+function ListingsContainer({ items, setItems}) {
+
+  useEffect(() => {
+    fetch("http://localhost:6001/listings")
+    .then(response => response.json())
+    .then(listings => setItems(listings.map(listing => {
+      return(
+        <ListingCard 
+          key={listing.id} 
+          id={listing.id} 
+          description={listing.description} 
+          image={listing.image} 
+          location={listing.location}
+          handleDelete={handleDelete} 
+        />
+      )
+    })))
+  }, [handleDelete])
+
+  function handleDelete(index) {
+    fetch(`http://localhost:6001/listings/${index}`, {
+      method : 'DELETE'
+    })
+  }
+
   return (
     <main>
       <ul className="cards">
-        {/* use the ListingCard component to display listings */}
+        {items}
       </ul>
     </main>
   );
